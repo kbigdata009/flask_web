@@ -97,6 +97,7 @@ templates/index.html 파일을 생성후 다음과 같이 코드를 추가
 [app.py](http://app.py) 파일을 다음과 같이 수정한다.
 
 ```python
+from flask import Flask , render_template
 ....
 
 @app.route('/')
