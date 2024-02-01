@@ -180,7 +180,7 @@ def index():
 ...
 ```
 
- [http://localhost:500](http://localhost:500)0 으로 get방식으로 요청을 할때
+ [http://localhost:500](http://localhost:500) 으로 get방식으로 요청을 할때
 
 즉 , query로 [http://localhost:5000?name=김태경](http://localhost:5000?name=김태경)&hello=안녕하세요
 
@@ -208,6 +208,57 @@ def index():
 
 ...
 ```
+##### 경로를 파라미터로 처리하는 방법
+
+ url : http://localhost:5000/hello/name
+
+method: GET 
+
+![image](https://github.com/kbigdata009/flask_web/assets/153488538/d413f566-7aaa-4dbb-8317-37d44a9222d7)
+
+ 위와 같은 경로에서 name 경로부분에 일반적인 이름을 넣으면 화면에 다음과 같이 보여주게 하기 위하여 
+
+main.py 부분에 다음과 같은 코드를 추가한다.
+
+```python
+....
+
+@app.route('/hello/<name>')
+def hello(name):
+    # print(action , sound)
+    action = request.args.get('action')
+    sound = request.args.get('sound')
+    return render_template('hello.html' 
+                           , data = {"name":name ,
+                                     "action":action,
+                                     "sound":sound} )
+...
+```
+
+
+
+templates/hello.html 파일을 생성 후 다음과 같은 코드를 추가한다.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹페이지</title>
+</head>
+<body>
+    <h1 style="color: red;">{{ data['name'] }} </h1>
+    <span>{{ data['aciton'] }}와 같은 행동을 하고</span>
+    <span>{{ data['sound'] }}와 소리를 낸다</span>
+</body>
+</html>
+```
+
+@app.get('/hello/<name>' 에서  { } 안에 변수를 지정하고 async def hello(name): 함수에서 매개변수로 받아서 
+
+처리하는 구현한다.
+
 
 이번에는 GET 방식의 아닌 POST 방식으로 form 데이터 형식으로 일정한 데이터를 보내기위해서
 
