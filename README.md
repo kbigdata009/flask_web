@@ -113,7 +113,6 @@ jinja2 문법과 데이터를 연결하는 방법을 알아 보기 위해서
 app.py의 @app.route(’/’)을 다음과 같이 수정한다.
 
 ```python
-
 ...
 
 @app.route('/')
@@ -165,7 +164,6 @@ method : POST
 일때는 다음과 같은  페이지가 랜더링 되도록 하기 위해 app.py를 다음과 같이 수정한다.
 
 ```python
-
 ....
 
 @app.route('/' , methods=['GET','POST'])
@@ -208,6 +206,7 @@ def index():
 
 ...
 ```
+
 ##### 경로를 파라미터로 처리하는 방법
 
  url : http://localhost:5000/hello/name
@@ -649,7 +648,6 @@ index.html을 다음과 같이 수정한다.
 위와 같은 기능을 구현하기 위하여 app.py를 다음과 같이 코드를 추가한다.
 
 ```python
-
 ...
 
 @app.route('/list', methods=['GET' , 'POST'])
