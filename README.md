@@ -375,9 +375,8 @@ def login():
 클라이언트 (즉 , 요청한 웹브라우저) 에서는 다음과 "Success" 라는 글씨가 페이지에 출력 되고 콘솔창에는 다음과 같은 메세시가 출력된다.
 
 ```powershell
-[32mINFO[0m:     127.0.0.1:57600 - "[1mPOST /login HTTP/1.1[0m" [32m200 OK[0m
-moduedu@gmail.com 1234
-[32mINFO[0m:     127.0.0.1:57602 - "[1mPOST /login HTTP/1.1[0m" [32m200 OK[0m
+moduedu 1234
+127.0.0.1 - - [01/Feb/2024 16:31:42] "POST /register HTTP/1.1" 200 -
 ```
 
 
