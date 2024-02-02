@@ -58,7 +58,7 @@ data : Hello World!! 텍스트 데이터가 클라이언트에 전송되도록 �
 app.py를 생성후 다음과 같이 코드를 추가한다.
 
 ```python
-from flask import Flask
+from flask import Flask , render_template
 
 app = Flask(__name__)
 
@@ -497,6 +497,163 @@ def register():
 Submit 버튼 클릭시 다음과 같은 페이지가 랜더링 된다.
 
 ![image-20240201160837094](https://github.com/kbigdata005/web_server/assets/153488538/c1f0e9f3-e7aa-4890-80b0-d160623e0e5b)
+
+
+
+
+
+#### DataBase에 저장, 편집 등 기능 구현
+
+DB를 활용하기 위하여 전에 구현하였던 회원가입과 로그인 코드를 활용하여 MongoDB에 저장하고 조회하는 기능을 구현한다.
+
+(mongoDB는 cloud기반에 원격에 data 를 저장할 수 있는 계층형 DB로서 [MONOGDB](https://www.mongodb.com/ko-kr) 여기로 회원가입과 함께 database를 구축해야 한다. )
+
+회원가입페이지에서 username, email, phone,password 를 입력하고 post 방식으로 http://localhost:5000/register 경로로 입력한
+
+데이터와 함께 요청을 보냈을때 서버에서 username, email, phone,password 의 내용을 mongodb에 저장한다.
+
+1. post 방식으로 http://localhost:5000/register 요청이 들어 왔을때 실행되기 위한 데코레이터 
+
+   ```python
+   @app.route('/register',  methods=['GET', 'POST'])
+   ```
+
+2. 기능구현을 위한 함수를 만들고 , 전달받은 데이터를 각각의 변수에 따로 저장한다.
+
+   mongodb의 'ubion' schema에 users 라는 collection에 저장한다.
+
+   ```python
+   from flask import Flask , render_template
+   from pymongo import MongoClient
+   ...
+   
+   #mongodb connect
+   mongodb_URI = "mongodb+srv://식으로 시작하는  mongodb 접속 주소"
+   client = MongoClient(mongodb_URI)
+   
+   db = client.ubion
+   
+   ...
+   
+   
+   @app.route('/register',methods=['GET', 'POST'])
+   def register():
+       if request.method == 'POST':
+           users = db.users
+           user = users.find_one({"email":email})
+               if user == None:
+                   hashed_pw = pbkdf2_sha256.hash(password+salt)
+                   result = users.insert_one({
+                       "username":username,
+                       "email":email,
+                       "phone":phone,
+                       "password":hashed_pw
+                   })
+   
+                   print(result)
+                   return redirect("/login" )
+   
+               else:
+                   return redirect("/register" )
+       elif request.method == 'GET':
+   
+   ```
+
+
+
+3. 가입하면서 작성한 항목 중에 email 을 중복되지 않게 하기위해 가입한 이메일이 있으면 다시 회원가입창을 보이게 하고 
+
+이메일이 중복이 되지 않으면 mongoDB에  저장하고 login.html이 랜더링 되도록 한다.
+
+
+
+
+
+4. Login 기능 구현 
+
+로그인 페이지에서 email 과 password를 전달받아 서버에서 mongodb의 ubion 디비의 users 콜랙션에서 입력받은 email 로 조회하고 조회한 email 없으면 회원가입창으로 이동하고 만들고 , 
+
+조회한 이메일이 있을때 입력받은 password와 database 에 조회한 password가 같으면 http://localhost:8000 으로 넘어가게 하고 비밀번호가 틀리면  다시 로그인 창으로 돌아 가도록 한다.
+
+main.py 를 다음과 같은 코드를 추가한다.
+
+```python
+@app.route('/login',methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = db.users
+        user = user.find_one({"email":email })
+            if user == None:
+                return redirect("/register")
+            else:
+                result = pbkdf2_sha256.verify(password+salt, user['password'] )
+                if result:
+                    return redirect("/")
+                else:
+                    return redirect("/login")
+    elif request.method == 'GET':
+        return render_template('login.html')
+    
+```
+
+
+
+
+
+main.py를 수정한다.
+
+```python
+...
+
+@app.route('/' , methods=['GET','POST'])
+def index():
+    if request.method == "GET":
+        os_info = dict(request.headers)
+        print(os_info) 
+        name = request.args.get("name")
+        print(name)
+        hello = request.args.get("hello")
+        print(hello)
+        return render_template('index.html',header=f'{name}님 {hello}!!' )
+
+...
+```
+
+이번에는 GET 방식의 아닌 POST 방식으로 form 데이터 형식으로 일정한 데이터를 보내기위해서
+
+index.html 에 다음과 같이 코드를 변경한다.
+
+
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹페이지</title>
+</head>
+<body>
+    <h1>Hello World!!</h1>
+    <form action="/" method="POST">
+        <div>
+          <label for="say">이름을 입력하세요!</label>
+          <input name="name" id="say" placeholder="이름" />
+        </div>
+        <div>
+          <label for="to">인사할 내용을 적어주세요</label>
+          <input name="hello" id="to" placeholder="인사할내용" />
+        </div>
+        <div>
+          <button>제출</button>
+        </div>
+      </form>
+      
+</body>
+</html>
+```
 
 
 
