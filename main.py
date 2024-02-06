@@ -81,10 +81,10 @@ def list():
     #     print(i)
     return render_template('list.html', list = results )
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/create_list', methods=['GET', 'POST'])
 def create():
     if request.method == "GET":
-        return render_template('create.html')
+        return render_template('create_list.html')
     else:
         #create document
         lists = db.lists
